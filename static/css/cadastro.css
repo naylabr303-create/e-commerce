@@ -1,0 +1,129 @@
+/* ======================================================================
+   BASE (igual ao login)
+====================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body.cadastro-body {
+    background: linear-gradient(135deg, #0b0b0b, #1a1a1a, #111);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    overflow: hidden;
+}
+
+/* ======================================================================
+   CONTAINER DO CADASTRO — idêntico ao login
+====================================================================== */
+.cadastro-container {
+    background: rgba(20, 20, 20, 0.75);
+    backdrop-filter: blur(14px);
+    padding: 50px 40px; /* mesmo padding do login */
+    width: 420px;
+    border-radius: 18px;
+    text-align: center;
+    animation: fadeIn 1s ease;
+    box-shadow: 0 0 30px rgba(255, 80, 150, 0.25);
+}
+
+/* Título igual ao login */
+.cadastro-container h2 {
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+/* Subtítulo igual ao do login */
+.cadastro-container .cadastro-sub {
+    color: #ccc;
+    font-size: 15px;
+    margin-bottom: 25px;
+}
+
+/* ======================================================================
+   FORMULÁRIO — igual ao login
+====================================================================== */
+.cadastro-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.cadastro-container input {
+    padding: 14px;
+    background: #222;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.cadastro-container input:focus {
+    border-color: #ff4fa1;
+    box-shadow: 0 0 8px rgba(255, 80, 150, 0.5);
+}
+
+/* ======================================================================
+   BOTÃO — idêntico ao login
+====================================================================== */
+.cadastro-container .btn-primary {
+    padding: 12px 30px;
+    border: none;
+    background: linear-gradient(135deg, #ff4fa1, #ff7ac8);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+    width: 100%;
+}
+
+.cadastro-container .btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(255, 80, 160, 0.4);
+}
+
+/* ======================================================================
+   LINK PARA LOGIN
+====================================================================== */
+.login-link {
+    margin-top: 20px;
+    color: #bbb;
+}
+
+.login-link a {
+    color: #ff4fa1;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+/* ======================================================================
+   ANIMAÇÃO (igual ao login)
+====================================================================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.google-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+#google-btn > div {
+    width: 100% !important;
+}

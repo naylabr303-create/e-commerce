@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Login – Lumiê Beauty AI</title>
+
+    <!-- CSS exclusivo do login -->
+    <link rel="stylesheet" href="/static/css/login.css">
+
+    <!-- Google Login API -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <meta name="google-signin-client_id" content="SEU_CLIENT_ID_AQUI.apps.googleusercontent.com">
+</head>
+
+<body class="login-body">
+
+    <div class="login-container">
+
+        <h1 class="login-title">Lumiê <span>Beauty</span> AI</h1>
+        <p class="login-sub">Acesse sua conta</p>
+
+        <!-- Formulário tradicional -->
+        <form action="/login" method="POST" class="login-form">
+            <input type="email" name="email" placeholder="Seu email" required>
+            <input type="password" name="senha" placeholder="Sua senha" required>
+            <button class="btn-primary login-btn">Entrar</button>
+        </form>
+
+        <p class="login-or">ou entre com</p>
+
+        <!-- GOOGLE BUTTON -->
+        <div id="g_id_onload"
+            data-client_id="SEU_CLIENT_ID_AQUI.apps.googleusercontent.com"
+            data-context="signin"
+            data-ux_mode="redirect"
+            data-login_uri="http://localhost:5000/catalogo"
+            data-auto_prompt="false">
+        </div>
+
+        <div class="g_id_signin"
+            data-type="standard"
+            data-size="large"
+            data-theme="outline"
+            data-text="sign_in_with"
+            data-shape="rectangular"
+            data-logo_alignment="left">
+        </div>
+
+        <p class="cadastro-link">
+            Não possui conta? <a href="/cadastro">Cadastre-se</a>
+        </p>
+
+        <!-- BOTÃO VOLTAR AO INDEX -->
+        <a href="/" class="btn-secondary voltar-btn">← Voltar ao início</a>
+
+    </div>
+
+</body>
+</html>

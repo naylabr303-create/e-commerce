@@ -1,0 +1,41 @@
+id,nome,categoria,tom_pele,marca,preco,descricao,imagem
+1,Base Matte Longa Duração,base,clara,Maybelline,49.9,Base matte com alta fixação,https://images.pexels.com/photos/7290154/pexels-photo-7290154.jpeg
+2,Batom Vermelho Intenso,batom,todos,MAC,99.9,Vermelho clássico de longa duração,https://images.pexels.com/photos/3373746/pexels-photo-3373746.jpeg
+3,Paleta de Sombras Nude Luxo,sombra,todos,Ruby Rose,39.9,Paleta com tons neutros,https://images.pexels.com/photos/3762877/pexels-photo-3762877.jpeg
+4,Corretivo Líquido HD,corretivo,media,Tracta,29.9,Cobertura natural,https://images.pexels.com/photos/3738341/pexels-photo-3738341.jpeg
+5,Pó Compacto Ultraleve,pó,clara,Vult,22.9,Acabamento suave e toque seco,https://images.pexels.com/photos/2795756/pexels-photo-2795756.jpeg
+6,Blush Rosa Suave,blush,todos,NARS,89.9,Blush rosado com brilho sutil,https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg
+7,Iluminador Dourado Glow,iluminador,todos,Bruna Tavares,69.9,Toque iluminado elegante,https://images.pexels.com/photos/3373736/pexels-photo-3373736.jpeg
+8,Primer Facial Matte,primer,todos,Quem Disse Berenice?,54.9,Reduz poros e oleosidade,https://images.pexels.com/photos/7598700/pexels-photo-7598700.jpeg
+9,Base Líquida Alta Cobertura,base,media,Boca Rosa Beauty,59.9,Base confortável de longa duração,https://images.pexels.com/photos/7290152/pexels-photo-7290152.jpeg
+10,Batom Nude Cremoso,batom,todos,Eudora,34.9,Nude perfeito para o dia a dia,https://images.pexels.com/photos/3373737/pexels-photo-3373737.jpeg
+11,Sombra Glitter Prata,sombra,todos,Lux Glow,49.9,Efeito espelhado profissional,https://images.pexels.com/photos/3373713/pexels-photo-3373713.jpeg
+12,Corretivo Matte Cover,corretivo,negra,Maybelline,35.9,Cobertura uniforme,https://images.pexels.com/photos/5938341/pexels-photo-5938341.jpeg
+13,Rímel Volume Explosion,rimel,todos,Avon,29.9,Efeito de cílios alongados,https://images.pexels.com/photos/3373730/pexels-photo-3373730.jpeg
+14,Delineador Preto Intenso,delineador,todos,Louisance,19.9,Traço definido e preciso,https://images.pexels.com/photos/3373725/pexels-photo-3373725.jpeg
+15,Gloss Labial Transparente,gloss,todos,Vult,15.9,Brilho natural e hidratante,https://images.pexels.com/photos/3373740/pexels-photo-3373740.jpeg
+16,Contorno em Bastão,contorno,media,Bruna Tavares,42.9,Definição profissional,https://images.pexels.com/photos/7598060/pexels-photo-7598060.jpeg
+17,Paleta de Blush e Iluminador,paleta,todos,Miss Rose,45.9,Kit completo,https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg
+18,Pó Translúcido Banana,pó,media,RCMA,79.9,Controle de oleosidade,https://images.pexels.com/photos/5938627/pexels-photo-5938627.jpeg
+19,Batom Líquido Matte Bordô,batom,todos,Dailus,22.9,Tonalidade marcante,https://images.pexels.com/photos/7598293/pexels-photo-7598293.jpeg
+20,Base Hidratante Natural,base,clara,Natura Una,79.9,Hidratação com cobertura média,https://images.pexels.com/photos/7290153/pexels-photo-7290153.jpeg
+21,Lápis de Olho Preto,lápis,todos,Avon,12.9,Macio e pigmentado,https://images.pexels.com/photos/7598262/pexels-photo-7598262.jpeg
+22,Kit Sobrancelha Duo,sobrancelha,todos,Koloss,29.9,Correção natural,https://images.pexels.com/photos/7598121/pexels-photo-7598121.jpeg
+23,Sombra Rosa Metálica,sombra,todos,O Boticário,36.9,Efeito cintilante,https://images.pexels.com/photos/3373749/pexels-photo-3373749.jpeg
+24,Iluminador Rosé Shine,iluminador,todos,MAC,119.9,Luxo e brilho intenso,https://images.pexels.com/photos/7598009/pexels-photo-7598009.jpeg
+25,Blush Coral Tropical,blush,todos,Dior,199.9,Alta pigmentação,https://images.pexels.com/photos/4041394/pexels-photo-4041394.jpeg
+26,Gloss Rosa Candy,gloss,todos,quem disse berenice?,25.9,Lábios brilhantes,https://images.pexels.com/photos/7598020/pexels-photo-7598020.jpeg
+27,Primer Glow Iluminador,primer,todos,Natura,63.9,Efeito radiante,https://images.pexels.com/photos/7597971/pexels-photo-7597971.jpeg
+28,Paleta Artística 12 Cores,paleta,todos,Anastasia Beverly Hills,269.9,Pigmentação profissional,https://images.pexels.com/photos/3762885/pexels-photo-3762885.jpeg
+29,Corretivo Suave Natural,corretivo,clara,Oceane,27.9,Efeito natural,https://images.pexels.com/photos/7598015/pexels-photo-7598015.jpeg
+30,Batom Roxo Impacto,batom,todos,Bruna Tavares,44.9,Cor vibrante,https://images.pexels.com/photos/7598127/pexels-photo-7598127.jpeg
+31,Base Soft Matte,base,negra,Fenty Beauty,189.9,Linha inclusiva premium,https://images.pexels.com/photos/5938623/pexels-photo-5938623.jpeg
+32,Rímel Curvador Power,rimel,todos,Maybelline,39.9,Efeito lifting,https://images.pexels.com/photos/7598072/pexels-photo-7598072.jpeg
+33,Pó Compacto Bronze,pó,morena,Eudora,32.9,Efeito bronzeado,https://images.pexels.com/photos/4041391/pexels-photo-4041391.jpeg
+34,Sombra Dourada Luxo,sombra,todos,Kylie Cosmetics,89.9,Dourado metálico,https://images.pexels.com/photos/7597976/pexels-photo-7597976.jpeg
+35,Gloss Chocolate,gloss,todos,Dailus,18.9,Cor quente hidratante,https://images.pexels.com/photos/7606021/pexels-photo-7606021.jpeg
+36,Blush Vinho Chic,blush,todos,MAC,129.9,Tons profundos,https://images.pexels.com/photos/4041393/pexels-photo-4041393.jpeg
+37,Iluminador Platinum,iluminador,todos,Too Faced,139.9,Efeito espelhado,https://images.pexels.com/photos/7598019/pexels-photo-7598019.jpeg
+38,Delineador Marrom Suave,delineador,todos,Oceane,24.9,Olhar natural,https://images.pexels.com/photos/7598098/pexels-photo-7598098.jpeg
+39,Pó HD Antioleosidade,pó,todos,Boca Rosa Beauty,49.9,Matificação prolongada,https://images.pexels.com/photos/5938905/pexels-photo-5938905.jpeg
+40,Base Natural Glow,base,morena,L’Oréal,69.9,Acabamento luminoso,https://images.pexels.com/photos/5938909/pexels-photo-5938909.jpeg

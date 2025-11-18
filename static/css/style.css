@@ -1,0 +1,202 @@
+/* ==========================================================================
+   ESTILO GERAL
+========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background: #111;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   NAVBAR
+========================================================================== */
+.navbar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    padding: 20px 60px;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 999;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.logo span {
+    color: #ff4fa1;
+}
+
+.menu a {
+    margin-left: 25px;
+    text-decoration: none;
+    color: #ddd;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.menu a:hover {
+    color: #ff4fa1;
+}
+
+/* ==========================================================================
+   HERO SECTION
+========================================================================== */
+.hero {
+    margin-top: 120px;
+    padding: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: fadeIn 1.2s ease;
+}
+
+.hero-content {
+    max-width: 480px;
+}
+
+.hero h1 {
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 25px;
+    color: #ccc;
+}
+
+.btn-primary {
+    padding: 12px 30px;
+    border: none;
+    background: linear-gradient(135deg, #ff4fa1, #ff7ac8);
+    color: #fff;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+}
+
+.hero-img img {
+    width: 450px;
+    border-radius: 14px;
+    box-shadow: 0 0 30px rgba(255, 90, 150, 0.4);
+}
+
+/* ==========================================================================
+   SEÇÕES GERAIS
+========================================================================== */
+.section {
+    padding: 100px 60px;
+}
+
+.section h2 {
+    font-size: 34px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    color: #bbb;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* ==========================================================================
+   SOBRE NÓS
+========================================================================== */
+.about {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+
+.about-text {
+    flex: 1;
+}
+
+.about-img img {
+    width: 420px;
+    border-radius: 18px;
+    box-shadow: 0 0 40px rgba(255, 80, 160, 0.4);
+}
+
+/* ==========================================================================
+   FORMULÁRIO DE RECOMENDAÇÃO
+========================================================================== */
+.form-rec {
+    max-width: 450px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-rec select {
+    padding: 12px;
+    font-size: 16px;
+    background: #222;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 8px;
+}
+
+/* ==========================================================================
+   CONTATO
+========================================================================== */
+.contact-form {
+    max-width: 500px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    padding: 12px;
+    border-radius: 8px;
+    background: #222;
+    border: 1px solid #444;
+    color: #fff;
+}
+
+.contact-form textarea {
+    height: 120px;
+    resize: none;
+}
+
+/* ==========================================================================
+   FOOTER
+========================================================================== */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #000;
+    color: #bbb;
+}
+
+/* ==========================================================================
+   ANIMAÇÕES
+========================================================================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

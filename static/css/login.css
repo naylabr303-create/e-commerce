@@ -1,0 +1,148 @@
+/* ======================================================================
+   BASE
+====================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body.login-body {
+    background: linear-gradient(135deg, #0b0b0b, #1a1a1a, #111);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    overflow: hidden;
+}
+
+/* ======================================================================
+   CONTAINER DO LOGIN
+====================================================================== */
+.login-container {
+    background: rgba(20, 20, 20, 0.75);
+    backdrop-filter: blur(14px);
+    padding: 50px 40px;
+    width: 420px;
+    border-radius: 18px;
+    text-align: center;
+    animation: fadeIn 1s ease;
+    box-shadow: 0 0 30px rgba(255, 80, 150, 0.25);
+}
+
+.login-title {
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.login-title span {
+    color: #ff4fa1;
+}
+
+.login-sub {
+    color: #ccc;
+    font-size: 15px;
+    margin-bottom: 25px;
+}
+
+/* ======================================================================
+   FORMULÁRIO
+====================================================================== */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.login-form input {
+    padding: 14px;
+    background: #222;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.login-form input:focus {
+    border-color: #ff4fa1;
+    box-shadow: 0 0 8px rgba(255, 80, 150, 0.5);
+}
+
+.login-btn {
+    width: 100%;
+}
+
+/* Botão padrão estilo global */
+.btn-primary {
+    padding: 12px 30px;
+    border: none;
+    background: linear-gradient(135deg, #ff4fa1, #ff7ac8);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(255, 80, 160, 0.4);
+}
+
+/* ======================================================================
+   LOGIN SOCIAL
+====================================================================== */
+.login-or {
+    margin: 15px 0;
+    color: #aaa;
+    font-size: 14px;
+}
+
+/* ======================================================================
+   LINK DE CADASTRO
+====================================================================== */
+.cadastro-link {
+    margin-top: 20px;
+    color: #bbb;
+}
+
+.cadastro-link a {
+    color: #ff4fa1;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.cadastro-link a:hover {
+    text-decoration: underline;
+}
+
+/* ======================================================================
+   ANIMAÇÃO
+====================================================================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.btn-secondary {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 10px 25px;
+    border: 1px solid #ff4fa1;
+    color: #ff4fa1;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 80, 160, 0.15);
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(255, 80, 160, 0.4);
+}

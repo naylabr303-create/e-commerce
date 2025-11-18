@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumiê Beauty AI – Início</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Fonte -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link 
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="logo">Lumiê <span>Beauty</span> AI</div>
+
+        <nav class="menu">
+            <a href="{{ url_for('login') }}" class="logout">Entrar</a>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section id="inicio" class="hero">
+        <div class="hero-content">
+            <h1>Beleza inteligente ao seu alcance</h1>
+            <p>Descubra produtos que combinam com o seu estilo usando inteligência artificial.</p>
+
+            <a href="{{ url_for('login') }}" class="btn-primary">Começar Agora</a>
+        </div>
+
+        <div class="hero-img">
+            <img 
+                src="https://images.unsplash.com/photo-1522336572468-97b06e8ef143?auto=format&fit=crop&w=800&q=80" 
+                alt="Modelo maquiada com tons rosados"
+            >
+        </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section id="sobre" class="section about">
+        <div class="about-text">
+            <h2>Sobre Nós</h2>
+            <p>
+                A <strong>Lumiê Beauty AI</strong> utiliza algoritmos avançados para recomendar maquiagens 
+                ideais para cada perfil, tom de pele e preferência pessoal.
+            </p>
+            <p>
+                Nosso objetivo é tornar o autocuidado mais acessível, intuitivo e moderno.
+            </p>
+        </div>
+
+        <div class="about-img">
+            <img 
+                src="https://images.unsplash.com/photo-1583241800698-c6a8ea443b77?auto=format&fit=crop&w=800&q=80" 
+                alt="Produtos de maquiagem organizados"
+            >
+        </div>
+    </section>
+
+    <footer>
+        © 2025 Lumiê Be

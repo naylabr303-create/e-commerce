@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo – Lumiê Beauty AI</title>
+
+    <link rel="stylesheet" href="/static/css/catalogo.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        async function carregarProdutos() {
+            const container = document.getElementById("produtos-container");
+            const produtos = await (await fetch("/api/maquiagens")).json();
+
+            container.innerHTML = "";
+
+            produtos.forEach(p => {
+                container.innerHTML += `
+                    <div class="card fade-in">
+
+                        <div class="card-img">
+                            <img src="${p.imagem}" alt="${p.nome}">
+                        </div>
+
+                        <div class="card-body">
+                            <h3>${p.nome}</h3>
+                            <p class="marca">${p.marca}</p>
+
+                            <p class="desc">${p.descricao || "Produto premium selecionado pela IA."}</p>
+
+                            <div class="tags">
+                                <span class="tag cat">${p.categoria}</span>
+                                <span class="tag tono">${p.tom_pele}</span>
+                            </div>
+
+                            <div class="price-row">
+                                <p class="preco">R$ ${p.preco.toFixed(2)}</p>
+                                <button class="btn-buy">Adicionar</button>
+                            </div>
+
+                            <button class="btn-rec" onclick="verRecomendados(${p.id})">
+                                Ver semelhantes
+                            </button>
+
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function verRecomendados(id) {
+            const res = await fetch(`/api/recomendar/${id}`);
+            const recs = await res.json();
+
+            let cards = "";
+
+            recs.forEach(r => {
+                cards += `
+                <div class="card small-card fade-in">
+                    <img src="${r.imagem}" alt="${r.nome}">
+                    <h3>${r.nome}</h3>
+                    <p>${r.marca}</p>
+                    <p class="preco">R$ ${r.preco}</p>
+                </div>`;
+            });
+
+            document.getElementById("produtos-container").innerHTML += cards;
+
+            alert("Produtos semelhantes adicionados ao final do catálogo.");
+        }
+
+        window.onload = carregarProdutos;
+    </script>
+
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">Lumiê <span>Beauty</span> AI</div>
+
+        <nav class="menu">
+            <a href="/">Home</a>
+            <a href="/catalogo" class="active">Catálogo</a>
+            <a href="/cadastro">Cadastro</a>
+            <a href="/carrinho">Carrinho</a>
+            <a href="/logout" class="logout">Sair</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-img">
+            <img src="https://static.vecteezy.com/system/resources/previews/045/907/190/large_2x/cosmetics-arranged-on-pink-background-free-photo.jpeg" alt="Hero Makeup">
+        </div>
+
+        <div class="hero-content">
+            <h1>Explore o Luxo da Beleza</h1>
+            <p>Produtos premium selecionados pela inteligência artificial.</p>
+            <a href="#produtos" class="btn-primary">Ver Coleção</a>
+        </div>
+    </section>
+
+    <section class="filtros">
+        <h2>Filtrar Produtos</h2>
+
+        <div class="filtros-grid">
+            <select id="filtro-cat">
+                <option value="">Categoria</option>
+                <option value="base">Base</option>
+                <option value="batom">Batom</option>
+                <option value="sombra">Sombra</option>
+                <option value="corretivo">Corretivo</option>
+                <option value="blush">Blush</option>
+                <option value="pó">Pó</option>
+                <option value="rimel">Rímel</option>
+                <option value="primer">Primer</option>
+            </select>
+
+            <select id="filtro-pele">
+                <option value="">Tom de Pele</option>
+                <option value="clara">Clara</option>
+                <option value="media">Média</option>
+                <option value="morena">Morena</option>
+                <option value="negra">Negra</option>
+            </select>
+
+            <button class="btn-primary">Aplicar</button>
+        </div>
+    </section>
+
+    <section id="produtos" class="catalogo">
+        <h2>Catálogo Premium</h2>
+        <p class="subtitle">Mais de 40 itens selecionados para você</p>
+
+        <div id="produtos-container" class="produtos-grid"></div>
+    </section>
+
+    <footer>
+        <p>© 2025 Lumiê Beauty AI — Beleza elevada ao máximo.</p>
+    </footer>
+
+</body>
+</html>

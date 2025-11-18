@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro – Lumiê Beauty AI</title>
+    <link rel="stylesheet" href="/static/css/cadastro.css">
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+
+<body class="cadastro-body">
+
+    <div class="cadastro-container">
+
+        <h2 class="cadastro-title">Crie sua conta</h2>
+        <p class="cadastro-sub">Preencha os dados abaixo</p>
+
+        <form action="/cadastro" method="POST" class="cadastro-form">
+            <input type="text" name="nome" placeholder="Nome completo" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="senha" placeholder="Senha" required>
+
+            <button class="btn-primary">Cadastrar</button>
+        </form>
+
+        <div class="login-or">ou</div>
+
+        <!-- Botão Google -->
+  <!-- Botão Google -->
+<div class="google-wrapper">
+    <div id="google-btn"></div>
+</div>
+
+<script>
+    function handleCredentialResponse(response) {
+        console.log("Token JWT recebido:", response.credential);
+
+        fetch("/auth/google", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: response.credential })
+        })
+        .then(res => res.json())
+        .then(() => window.location.href = "/dashboard");
+    }
+
+    window.onload = function () {
+        google.accounts.id.initialize({
+            client_id: "SEU_CLIENT_ID_AQUI",
+            callback: handleCredentialResponse
+        });
+
+        google.accounts.id.renderButton(
+            document.getElementById("google-btn"),
+            {
+                theme: "outline",
+                size: "large",
+                shape: "pill",
+                width: 320,   // ⬅⬅⬅ tamanho REAL
+                logo_alignment: "left"
+            }
+        );
+    };
+</script>
+
+
+        <p class="login-link">
+            Já possui conta? <a href="/login">Faça login</a>
+        </p>
+    </div>
+
+</body>
+</html>
