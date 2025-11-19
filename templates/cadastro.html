@@ -2,73 +2,227 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro – Lumiê Beauty AI</title>
-    <link rel="stylesheet" href="/static/css/cadastro.css">
+    <title>Cadastro – Luna Belle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Google Identity Services -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google API -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body class="cadastro-body">
 
+    <div class="particles" id="particles"></div>
+
+    <div class="floating-elements">
+        <div class="floating-element" style="width: 100px; height: 100px; top: 10%; left: 5%;"></div>
+        <div class="floating-element" style="width: 150px; height: 150px; top: 60%; left: 80%;"></div>
+        <div class="floating-element" style="width: 80px; height: 80px; top: 80%; left: 10%;"></div>
+    </div>
+
     <div class="cadastro-container">
 
-        <h2 class="cadastro-title">Crie sua conta</h2>
-        <p class="cadastro-sub">Preencha os dados abaixo</p>
+        <div class="logo-container">
+            <div class="logo-circle">
+                <img src="/static/img/LB Logo.png" alt="Logo Luna Belle">
+            </div>
+            <h1 class="cadastro-title">Luna <span>Belle</span></h1>
+            <p class="cadastro-sub">Crie sua conta</p>
+        </div>
 
-        <form action="/cadastro" method="POST" class="cadastro-form">
-            <input type="text" name="nome" placeholder="Nome completo" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="senha" placeholder="Senha" required>
+        <div id="erroBox" class="error-message" style="display:none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="erroText"></span>
+        </div>
 
-            <button class="btn-primary">Cadastrar</button>
+        <!-- FORMULÁRIO VINCULADO AO JSON -->
+        <form id="form-cadastro" class="cadastro-form">
+
+            <!-- Nome -->
+            <div class="form-group">
+                <input type="text" name="nome" id="nome" placeholder="Nome completo" required>
+                <i class="fas fa-user"></i>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <input type="email" name="email" id="email" placeholder="Seu email" required>
+                <i class="fas fa-envelope"></i>
+            </div>
+
+            <!-- Senha -->
+            <div class="form-group">
+                <input type="password" name="senha" id="senha" placeholder="Sua senha" required>
+                <i class="fas fa-lock"></i>
+                <button type="button" class="password-toggle" onclick="togglePassword()">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+
+            <!-- Termos -->
+            <div class="terms-checkbox">
+                <input type="checkbox" id="terms" required>
+                <label for="terms">
+                    Concordo com os 
+                    <a href="/termos" class="terms-link">Termos de Serviço</a> e 
+                    <a href="/privacidade" class="terms-link">Política de Privacidade</a>
+                </label>
+            </div>
+
+            <!-- Botão -->
+            <button type="submit" class="btn-primary" id="btnCadastrar">
+                <i class="fas fa-user-plus"></i>
+                Criar Conta
+            </button>
+
+            <!-- Login Google -->
+            <div id="googleLogin" style="margin-top: 20px;"></div>
+
         </form>
-
-        <div class="login-or">ou</div>
-
-        <!-- Botão Google -->
-  <!-- Botão Google -->
-<div class="google-wrapper">
-    <div id="google-btn"></div>
-</div>
-
-<script>
-    function handleCredentialResponse(response) {
-        console.log("Token JWT recebido:", response.credential);
-
-        fetch("/auth/google", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: response.credential })
-        })
-        .then(res => res.json())
-        .then(() => window.location.href = "/dashboard");
-    }
-
-    window.onload = function () {
-        google.accounts.id.initialize({
-            client_id: "SEU_CLIENT_ID_AQUI",
-            callback: handleCredentialResponse
-        });
-
-        google.accounts.id.renderButton(
-            document.getElementById("google-btn"),
-            {
-                theme: "outline",
-                size: "large",
-                shape: "pill",
-                width: 320,   // ⬅⬅⬅ tamanho REAL
-                logo_alignment: "left"
-            }
-        );
-    };
-</script>
-
 
         <p class="login-link">
             Já possui conta? <a href="/login">Faça login</a>
         </p>
+
+        <a href="/" class="voltar-btn">
+            <i class="fas fa-arrow-left"></i>
+            Voltar ao início
+        </a>
+
     </div>
+
+<script>
+/* ---------------------------
+   MOSTRAR/OCULTAR SENHA
+---------------------------- */
+function togglePassword() {
+    const senhaInput = document.getElementById('senha');
+    const icon = document.querySelector('.password-toggle i');
+    senhaInput.type = senhaInput.type === 'password' ? 'text' : 'password';
+    icon.classList.toggle('fa-eye');
+    icon.classList.toggle('fa-eye-slash');
+}
+
+/* ---------------------------
+   ENVIO PARA BANCO JSON
+---------------------------- */
+document.getElementById("form-cadastro").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById("btnCadastrar");
+    btn.classList.add("btn-loading");
+    btn.disabled = true;
+
+    // CAPTURANDO DADOS (VINCULADO AO JSON)
+    const body = {
+        nome: document.getElementById("nome").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        senha: document.getElementById("senha").value.trim(),
+        termos: document.getElementById("terms").checked,
+        data_criacao: new Date().toISOString()
+    };
+
+    try {
+        const response = await fetch("/api/cadastro", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            mostrarErro(result.erro || "Erro ao criar conta.");
+            btn.disabled = false;
+            btn.classList.remove("btn-loading");
+            return;
+        }
+
+        window.location.href = "/login";
+
+    } catch (e) {
+        mostrarErro("Erro no servidor.");
+        btn.disabled = false;
+        btn.classList.remove("btn-loading");
+    }
+});
+
+/* ---------------------------
+   ERRO
+---------------------------- */
+function mostrarErro(msg) {
+    const box = document.getElementById("erroBox");
+    const text = document.getElementById("erroText");
+    text.textContent = msg;
+    box.style.display = "flex";
+}
+
+/* ---------------------------
+   GOOGLE LOGIN
+---------------------------- */
+window.onload = function () {
+    google.accounts.id.initialize({
+        client_id: "SEU_CLIENT_ID_GOOGLE_AQUI",
+        callback: loginGoogleCallback
+    });
+
+    google.accounts.id.renderButton(
+        document.getElementById("googleLogin"),
+        { theme: "filled_black", size: "large", width: "100%" }
+    );
+};
+
+async function loginGoogleCallback(response) {
+    // ENVIA TOKEN GOOGLE → BACKEND → JSON
+    await fetch("/api/google-login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ credential: response.credential })
+    })
+    .then(r => r.json())
+    .then(() => window.location.href = "/");
+}
+
+/* ---------------------------
+   Animações
+---------------------------- */
+function criarParticulas() {
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 15; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        const size = Math.random() * 6 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 5}s`;
+        container.appendChild(particle);
+    }
+}
+
+function typeWriter() {
+    const text = "Junte-se à comunidade Luna Belle";
+    const element = document.querySelector('.cadastro-sub');
+    let i = 0;
+    element.innerHTML = '';
+    function type() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(type, 45);
+        }
+    }
+    setTimeout(type, 500);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    criarParticulas();
+    typeWriter();
+});
+</script>
 
 </body>
 </html>

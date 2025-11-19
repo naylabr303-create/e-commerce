@@ -2,59 +2,139 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Login – Lumiê Beauty AI</title>
+    <title>Login – Luna Belle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- CSS exclusivo do login -->
-    <link rel="stylesheet" href="/static/css/login.css">
-
-    <!-- Google Login API -->
+    <!-- Google API -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-
-    <meta name="google-signin-client_id" content="SEU_CLIENT_ID_AQUI.apps.googleusercontent.com">
 </head>
 
 <body class="login-body">
 
+    <div class="particles" id="particles"></div>
+
+    <div class="floating-elements">
+        <div class="floating-element" style="width: 100px; height: 100px; top: 10%; left: 5%;"></div>
+        <div class="floating-element" style="width: 150px; height: 150px; top: 60%; left: 80%;"></div>
+        <div class="floating-element" style="width: 80px; height: 80px; top: 80%; left: 10%;"></div>
+    </div>
+
     <div class="login-container">
 
-        <h1 class="login-title">Lumiê <span>Beauty</span> AI</h1>
-        <p class="login-sub">Acesse sua conta</p>
+        <div class="logo-container">
+            <div class="logo-circle">
+                <img src="/static/img/LB Logo.png" alt="Logo Luna Belle">
+            </div>
+            <h1 class="login-title">Luna <span>Belle</span></h1>
+            <p class="login-sub">Acesse sua conta</p>
+        </div>
 
-        <!-- Formulário tradicional -->
+        {% if erro %}
+        <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i> {{ erro }}
+        </div>
+        {% endif %}
+
         <form action="/login" method="POST" class="login-form">
-            <input type="email" name="email" placeholder="Seu email" required>
-            <input type="password" name="senha" placeholder="Sua senha" required>
-            <button class="btn-primary login-btn">Entrar</button>
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Seu email" required>
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="form-group">
+                <input type="password" name="senha" id="senha" placeholder="Sua senha" required>
+                <i class="fas fa-lock"></i>
+                <button type="button" class="password-toggle" onclick="togglePassword()">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-sign-in-alt"></i>
+                Entrar
+            </button>
         </form>
 
-        <p class="login-or">ou entre com</p>
-
-        <!-- GOOGLE BUTTON -->
-        <div id="g_id_onload"
-            data-client_id="SEU_CLIENT_ID_AQUI.apps.googleusercontent.com"
-            data-context="signin"
-            data-ux_mode="redirect"
-            data-login_uri="http://localhost:5000/catalogo"
-            data-auto_prompt="false">
-        </div>
-
-        <div class="g_id_signin"
-            data-type="standard"
-            data-size="large"
-            data-theme="outline"
-            data-text="sign_in_with"
-            data-shape="rectangular"
-            data-logo_alignment="left">
-        </div>
-
+        <!-- Login Google -->
+        <div id="googleLogin" style="margin-top: 20px;"></div>
+<br>
         <p class="cadastro-link">
             Não possui conta? <a href="/cadastro">Cadastre-se</a>
         </p>
 
-        <!-- BOTÃO VOLTAR AO INDEX -->
-        <a href="/" class="btn-secondary voltar-btn">← Voltar ao início</a>
+        <a href="/" class="voltar-btn">
+            <i class="fas fa-arrow-left"></i>
+            Voltar ao início
+        </a>
 
     </div>
+
+    <script>
+    /* ---------------------------
+       Mostrar/ocultar senha
+    ---------------------------- */
+    function togglePassword() {
+        const senhaInput = document.getElementById('senha');
+        const icon = document.querySelector('.password-toggle i');
+        senhaInput.type = senhaInput.type === 'password' ? 'text' : 'password';
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    }
+
+    /* ---------------------------
+       Google Login - Igual ao cadastro
+    ---------------------------- */
+    window.onload = function () {
+        google.accounts.id.initialize({
+            client_id: "SEU_CLIENT_ID_GOOGLE_AQUI",
+            callback: loginGoogleCallback
+        });
+
+        google.accounts.id.renderButton(
+            document.getElementById("googleLogin"),
+            { theme: "filled_black", size: "large", width: "100%" }
+        );
+    };
+
+    async function loginGoogleCallback(response) {
+        // Enviar token ao backend
+        const res = await fetch("/api/google-login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ credential: response.credential })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            window.location.href = "/";
+        } else {
+            alert("Erro ao fazer login com Google");
+        }
+    }
+
+    /* ---------------------------
+       Partículas
+    ---------------------------- */
+    function criarParticulas() {
+        const container = document.getElementById('particles');
+        const particleCount = 15;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 6 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            container.appendChild(particle);
+        }
+    }
+
+    criarParticulas();
+    </script>
 
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lumiê Beauty AI – Início</title>
+    <title>Luna Belle – Beleza Inteligente</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -13,56 +13,192 @@
     <link 
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
       rel="stylesheet">
+
+    <!-- Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 
     <!-- NAVBAR -->
     <header class="navbar">
-        <div class="logo">Lumiê <span>Beauty</span> AI</div>
+        <div class="logo-container">
+            <img src="/static/img/LB Logo.png" alt="Luna Belle" class="logo-img">
+            <div class="logo-text">Luna <span>Belle</span></div>
+        </div>
 
         <nav class="menu">
-            <a href="{{ url_for('login') }}" class="logout">Entrar</a>
+            <a href="{{ url_for('login') }}" class="login-btn">Entrar</a>
         </nav>
     </header>
 
     <!-- HERO -->
     <section id="inicio" class="hero">
-        <div class="hero-content">
-            <h1>Beleza inteligente ao seu alcance</h1>
-            <p>Descubra produtos que combinam com o seu estilo usando inteligência artificial.</p>
+        <div class="hero-bg"></div>
 
-            <a href="{{ url_for('login') }}" class="btn-primary">Começar Agora</a>
+        <div class="hero-content">
+            <h1 class="hero-title">Beleza inteligente ao seu alcance</h1>
+
+            <p class="hero-description">
+                Descubra produtos que combinam com o seu estilo usando inteligência artificial.
+                <span class="highlight">Recomendações personalizadas</span> para seu tom de pele e preferências.
+            </p>
+
+            <div class="hero-actions">
+                <a href="{{ url_for('login') }}" class="btn-primary">
+                    <span>Começar Agora</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+
+                <a href="#sobre" class="btn-secondary">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Conhecer Mais</span>
+                </a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-number">+5.000</div>
+                    <div class="stat-label">Clientes Satisfeitas</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Precisão nas Recomendações</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">+2.000</div>
+                    <div class="stat-label">Produtos Analisados</div>
+                </div>
+            </div>
         </div>
 
         <div class="hero-img">
-            <img 
-                src="https://images.unsplash.com/photo-1522336572468-97b06e8ef143?auto=format&fit=crop&w=800&q=80" 
-                alt="Modelo maquiada com tons rosados"
-            >
+            <div class="img-container">
+                <img src="/static/img/banner.png" alt="Modelo com maquiagem" class="main-img">
+
+                <div class="floating-card card-1">
+                    <i class="fas fa-palette"></i>
+                    <span>Análise de Tons</span>
+                </div>
+
+                <div class="floating-card card-2">
+                    <i class="fas fa-star"></i>
+                    <span>Produtos Premium</span>
+                </div>
+
+                <div class="floating-card card-3">
+                    <i class="fas fa-bolt"></i>
+                    <span>Resultados Rápidos</span>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- SOBRE -->
     <section id="sobre" class="section about">
-        <div class="about-text">
+        <div class="section-header">
             <h2>Sobre Nós</h2>
-            <p>
-                A <strong>Lumiê Beauty AI</strong> utiliza algoritmos avançados para recomendar maquiagens 
-                ideais para cada perfil, tom de pele e preferência pessoal.
-            </p>
-            <p>
-                Nosso objetivo é tornar o autocuidado mais acessível, intuitivo e moderno.
-            </p>
+            <p class="subtitle">Conheça a tecnologia por trás da sua beleza</p>
         </div>
+        
+        <div class="about-content">
+            <div class="about-text">
 
-        <div class="about-img">
-            <img 
-                src="https://images.unsplash.com/photo-1583241800698-c6a8ea443b77?auto=format&fit=crop&w=800&q=80" 
-                alt="Produtos de maquiagem organizados"
-            >
+                <div class="features">
+                    <div class="feature">
+                        <div class="feature-icon"><i class="fas fa-robot"></i></div>
+                        <div class="feature-content">
+                            <h3>IA Avançada</h3>
+                            <p>Algoritmos de última geração para recomendações precisas.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon"><i class="fas fa-user-cog"></i></div>
+                        <div class="feature-content">
+                            <h3>Personalização</h3>
+                            <p>Recomendações adaptadas ao seu tom de pele e estilo único.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon"><i class="fas fa-gem"></i></div>
+                        <div class="feature-content">
+                            <h3>Produtos Selecionados</h3>
+                            <p>Parceria com as melhores marcas do mercado de beleza.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-description">
+                    <p>
+                        A <strong>Luna Belle</strong> utiliza inteligência artificial para recomendar maquiagens ideais para
+                        cada perfil, tom de pele e preferências pessoais.
+                    </p>
+                    <p>
+                        Nosso objetivo é tornar o autocuidado mais moderno e acessível, combinando tecnologia e beleza para realçar sua essência.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="about-img">
+                <div class="img-wrapper">
+                    <img src="/static/img/banner_maquiagens.png" alt="Produtos de maquiagem">
+                    <div class="img-overlay"></div>
+                </div>
+            </div>
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer>
-        © 2025 Lumiê Be
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="/static/img/LB Logo.png" alt="Luna Belle" class="logo-img">
+                <div class="logo-text">Luna <span>Belle</span></div>
+            </div>
+            <p>© 2025 Luna Belle. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            /* Digitação no título */
+            const title = document.querySelector('.hero-title');
+            const original = title.innerHTML;
+            title.innerHTML = '';
+            let i = 0;
+
+            const type = () => {
+                if (i < original.length) {
+                    title.innerHTML += original.charAt(i);
+                    i++;
+                    setTimeout(type, 30);
+                }
+            };
+            setTimeout(type, 400);
+
+            /* Cards flutuantes */
+            document.querySelectorAll('.floating-card').forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.5}s`;
+            });
+
+            /* Scroll suave */
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+        });
+    </script>
+
+</body>
+</html>
