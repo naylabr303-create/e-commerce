@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Google API -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
@@ -55,7 +54,6 @@
             </button>
         </form>
 
-        <!-- Login Google -->
         <div id="googleLogin" style="margin-top: 20px;"></div>
 <br>
         <p class="cadastro-link">
@@ -70,9 +68,7 @@
     </div>
 
     <script>
-    /* ---------------------------
-       Mostrar/ocultar senha
-    ---------------------------- */
+
     function togglePassword() {
         const senhaInput = document.getElementById('senha');
         const icon = document.querySelector('.password-toggle i');
@@ -81,9 +77,6 @@
         icon.classList.toggle('fa-eye-slash');
     }
 
-    /* ---------------------------
-       Google Login - Igual ao cadastro
-    ---------------------------- */
     window.onload = function () {
         google.accounts.id.initialize({
             client_id: "SEU_CLIENT_ID_GOOGLE_AQUI",
@@ -97,7 +90,6 @@
     };
 
     async function loginGoogleCallback(response) {
-        // Enviar token ao backend
         const res = await fetch("/api/google-login", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -113,9 +105,6 @@
         }
     }
 
-    /* ---------------------------
-       Partículas
-    ---------------------------- */
     function criarParticulas() {
         const container = document.getElementById('particles');
         const particleCount = 15;

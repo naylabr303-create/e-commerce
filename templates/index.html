@@ -5,22 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Luna Belle – Beleza Inteligente</title>
 
-    <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-    <!-- Fonte -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link 
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
       rel="stylesheet">
 
-    <!-- Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
     <header class="navbar">
         <div class="logo-container">
             <img src="/static/img/LB Logo.png" alt="Luna Belle" class="logo-img">
@@ -31,8 +27,6 @@
             <a href="{{ url_for('login') }}" class="login-btn">Entrar</a>
         </nav>
     </header>
-
-    <!-- HERO -->
     <section id="inicio" class="hero">
         <div class="hero-bg"></div>
 
@@ -45,7 +39,7 @@
             </p>
 
             <div class="hero-actions">
-                <a href="{{ url_for('login') }}" class="btn-primary">
+                <a href="{{ url_for('catalogo') }}" class="btn-primary">
                     <span>Começar Agora</span>
                     <i class="fas fa-arrow-right"></i>
                 </a>
@@ -93,8 +87,6 @@
             </div>
         </div>
     </section>
-
-    <!-- SOBRE -->
     <section id="sobre" class="section about">
         <div class="section-header">
             <h2>Sobre Nós</h2>
@@ -151,9 +143,6 @@
         </div>
     </section>
 
-    
-
-    <!-- FOOTER -->
     <footer>
         <div class="footer-content">
             <div class="footer-logo">
@@ -164,11 +153,9 @@
         </div>
     </footer>
 
-    <!-- SCRIPT -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            /* Digitação no título */
             const title = document.querySelector('.hero-title');
             const original = title.innerHTML;
             title.innerHTML = '';
@@ -183,12 +170,10 @@
             };
             setTimeout(type, 400);
 
-            /* Cards flutuantes */
             document.querySelectorAll('.floating-card').forEach((card, index) => {
                 card.style.animationDelay = `${index * 0.5}s`;
             });
 
-            /* Scroll suave */
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();

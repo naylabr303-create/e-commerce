@@ -2,34 +2,259 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Carrinho – Lumiê Beauty AI</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Carrinho – Luna Belle</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/carrinho.css') }}">
 </head>
 
 <body>
 
-<header class="navbar">
-    <div class="logo">Lumiê <span>Beauty</span> AI</div>
-    <nav class="menu">
-        <a href="/catalogo">Catálogo</a>
-        <a href="/cadastro">Cadastro</a>
-        <a href="/carrinho">Carrinho</a>
-        <a href="/logout" class="logout">Sair</a>
-    </nav>
-</header>
+    <header class="navbar">
+        <div class="logo">Luna Bella <span>Beauty</span> AI</div>
 
-<section class="section carrinho">
-    <h2>Seu Carrinho</h2>
-    <p>Aqui aparecerão os produtos adicionados.</p>
+        <nav class="menu">
+            <a href="/">Home</a>
+<a href="/catalogo">Catálogo</a>
+            <a href="/cadastro">Cadastro</a>
+            <a href="/carrinho" class="active">Carrinho</a>
+            <a href="/logout" class="logout">Sair</a>
+        </nav>
+    </header>
 
-    <div class="cart-box">
-        <p>Carrinho vazio.</p>
-    </div>
-</section>
+    <section class="carrinho-container">
+        <div class="carrinho-content">
+            <div class="carrinho-header">
+                <h2>Meu Carrinho</h2>
+                <span id="contador-itens" class="contador-itens">0 itens</span>
+            </div>
 
-<footer>
-    © 2025 Lumiê Beauty AI — Todos os direitos reservados.
-</footer>
+            <div id="carrinho-vazio" class="carrinho-vazio">
+                <div class="empty-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h3>Seu carrinho está vazio</h3>
+                <p>Adicione produtos incríveis do nosso catálogo</p>
+                <a href="/catalogo" class="btn-primary">
+                    <i class="fas fa-store"></i>
+                    Explorar Catálogo
+                </a>
+            </div>
+
+            <div id="carrinho-itens" class="carrinho-itens" style="display: none;">
+                <div class="itens-lista" id="itens-lista"></div>
+
+                <div class="resumo-pedido">
+                    <div class="resumo-header">
+                        <h3>Resumo do Pedido</h3>
+                    </div>
+                    
+                    <div class="resumo-detalhes">
+                        <div class="resumo-linha">
+                            <span>Subtotal</span>
+                            <span id="subtotal">R$ 0,00</span>
+                        </div>
+                        <div class="resumo-linha">
+                            <span>Frete</span>
+                            <span id="frete">Grátis</span>
+                        </div>
+                        <div class="resumo-linha total">
+                            <span>Total</span>
+                            <span id="total">R$ 0,00</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-finalizar" id="btn-finalizar">
+                        <i class="fas fa-credit-card"></i>
+                        Finalizar Compra
+                    </button>
+
+                    <a href="/catalogo" class="btn-continuar">
+                        <i class="fas fa-arrow-left"></i>
+                        Continuar Comprando
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 Luna Belle — Beleza elevada ao máximo.</p>
+    </footer>
+
+    <script>
+        let carrinhoItens = [];
+
+        async function carregarCarrinho() {
+            try {
+                const response = await fetch('/api/carrinho');
+                const data = await response.json();
+
+                if (response.ok) {
+                    carrinhoItens = data.itens || [];
+                    exibirCarrinho();
+                }
+            } catch (error) {
+                console.error('Erro ao carregar carrinho:', error);
+                mostrarNotificacao('Erro ao carregar carrinho', 'error');
+            }
+        }
+
+        function exibirCarrinho() {
+            const carrinhoVazio = document.getElementById('carrinho-vazio');
+            const carrinhoItensDiv = document.getElementById('carrinho-itens');
+            const contadorItens = document.getElementById('contador-itens');
+            const itensLista = document.getElementById('itens-lista');
+            const subtotal = document.getElementById('subtotal');
+            const total = document.getElementById('total');
+
+            if (carrinhoItens.length === 0) {
+                carrinhoVazio.style.display = 'block';
+                carrinhoItensDiv.style.display = 'none';
+                contadorItens.textContent = '0 itens';
+                return;
+            }
+
+            carrinhoVazio.style.display = 'none';
+            carrinhoItensDiv.style.display = 'block';
+            
+            const totalItens = carrinhoItens.reduce((sum, item) => sum + item.quantidade, 0);
+            contadorItens.textContent = `${totalItens} ${totalItens === 1 ? 'item' : 'itens'}`;
+
+            let subtotalValor = 0;
+            carrinhoItens.forEach(item => {
+                subtotalValor += item.preco * item.quantidade;
+            });
+
+            subtotal.textContent = `R$ ${subtotalValor.toFixed(2).replace('.', ',')}`;
+            total.textContent = `R$ ${subtotalValor.toFixed(2).replace('.', ',')}`;
+
+            itensLista.innerHTML = '';
+            carrinhoItens.forEach(item => {
+                const itemHTML = `
+                    <div class="carrinho-item" data-id="${item.id}">
+                        <div class="item-imagem">
+                            <img src="${item.imagem}" alt="${item.nome}" onerror="this.src='https://via.placeholder.com/100x100?text=Imagem'">
+                        </div>
+                        <div class="item-info">
+                            <h3 class="item-nome">${item.nome}</h3>
+                            <p class="item-marca">${item.marca}</p>
+                            <p class="item-preco">R$ ${item.preco.toFixed(2).replace('.', ',')}</p>
+                        </div>
+                        <div class="item-controles">
+                            <div class="quantidade-controle">
+                                <button class="btn-quantidade" onclick="alterarQuantidade(${item.id}, -1)">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="quantidade">${item.quantidade}</span>
+                                <button class="btn-quantidade" onclick="alterarQuantidade(${item.id}, 1)">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <button class="btn-remover" onclick="removerItem(${item.id})">
+                                <i class="fas fa-trash"></i>
+                                Remover
+                            </button>
+                        </div>
+                        <div class="item-total">
+                            R$ ${(item.preco * item.quantidade).toFixed(2).replace('.', ',')}
+                        </div>
+                    </div>
+                `;
+                itensLista.innerHTML += itemHTML;
+            });
+        }
+
+        async function alterarQuantidade(produtoId, alteracao) {
+            const item = carrinhoItens.find(i => i.id === produtoId);
+            if (!item) return;
+
+            const novaQuantidade = item.quantidade + alteracao;
+            
+            if (novaQuantidade < 1) {
+                await removerItem(produtoId);
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/carrinho/atualizar/${produtoId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quantidade: novaQuantidade })
+                });
+
+                if (response.ok) {
+                    await carregarCarrinho();
+                    mostrarNotificacao('Quantidade atualizada!', 'success');
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar quantidade:', error);
+                mostrarNotificacao('Erro ao atualizar quantidade', 'error');
+            }
+        }
+
+        async function removerItem(produtoId) {
+            try {
+                const response = await fetch(`/api/carrinho/remover/${produtoId}`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    await carregarCarrinho();
+                    mostrarNotificacao('Item removido do carrinho', 'success');
+                }
+            } catch (error) {
+                console.error('Erro ao remover item:', error);
+                mostrarNotificacao('Erro ao remover item', 'error');
+            }
+        }
+
+        function mostrarNotificacao(mensagem, tipo = 'info') {
+            const notificacao = document.createElement('div');
+            notificacao.className = `notificacao notificacao-${tipo}`;
+            notificacao.innerHTML = `
+                <div class="notificacao-conteudo">
+                    <i class="fas fa-${tipo === 'success' ? 'check' : tipo === 'error' ? 'exclamation-triangle' : 'info'}"></i>
+                    <span>${mensagem}</span>
+                </div>
+            `;
+
+            document.body.appendChild(notificacao);
+
+            setTimeout(() => {
+                notificacao.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notificacao.classList.remove('show');
+                setTimeout(() => {
+                    if (notificacao.parentNode) {
+                        notificacao.parentNode.removeChild(notificacao);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        document.getElementById('btn-finalizar').addEventListener('click', function() {
+            if (carrinhoItens.length === 0) {
+                mostrarNotificacao('Seu carrinho está vazio!', 'error');
+                return;
+            }
+
+            const total = carrinhoItens.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
+            mostrarNotificacao(`Compra finalizada! Total: R$ ${total.toFixed(2).replace('.', ',')}`, 'success');
+            
+            setTimeout(() => {
+                fetch('/api/carrinho/limpar', { method: 'POST' })
+                    .then(() => carregarCarrinho());
+            }, 2000);
+        });
+
+        window.onload = carregarCarrinho;
+    </script>
 
 </body>
 </html>

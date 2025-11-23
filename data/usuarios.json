@@ -3,5 +3,10 @@
         "nome": "nadyla",
         "senha": "123456",
         "data_cadastro": "2025-11-22 23:32:17"
+    },
+    "nadine@gmail.com": {
+        "nome": "Nadine Oliveira Santos",
+        "senha": "123456",
+        "data_cadastro": "2025-11-23 08:24:26.216560"
     }
 }

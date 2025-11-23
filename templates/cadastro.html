@@ -77,9 +77,6 @@
     </div>
 
     <script>
-    /* ---------------------------
-       Mostrar/ocultar senha
-    ---------------------------- */
     function togglePassword(fieldId) {
         const senhaInput = document.getElementById(fieldId);
         const icon = senhaInput.parentNode.querySelector('.password-toggle i');
@@ -88,9 +85,6 @@
         icon.classList.toggle('fa-eye-slash');
     }
 
-    /* ---------------------------
-       Validação do formulário
-    ---------------------------- */
     document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -103,7 +97,6 @@
             confirmar_senha: formData.get('confirmar_senha')
         };
 
-        // Validações
         if (dados.senha !== dados.confirmar_senha) {
             alert('As senhas não coincidem!');
             return;
@@ -114,7 +107,6 @@
             return;
         }
 
-        // Mostrar loading
         btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cadastrando...';
         btnCadastrar.disabled = true;
 
@@ -139,15 +131,12 @@
             alert('Erro de conexão. Tente novamente.');
             console.error('Erro:', error);
         } finally {
-            // Restaurar botão
             btnCadastrar.innerHTML = '<i class="fas fa-user-plus"></i> Criar Conta';
             btnCadastrar.disabled = false;
         }
     });
 
-    /* ---------------------------
-       Partículas
-    ---------------------------- */
+
     function criarParticulas() {
         const container = document.getElementById('particles');
         const particleCount = 15;

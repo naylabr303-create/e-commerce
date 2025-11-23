@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="/static/css/catalogo.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/catalogo.css">
+
 </head>
 
 <body>
@@ -62,7 +65,6 @@
 
             <select id="filtro-marca">
                 <option value="">Todas as Marcas</option>
-                <!-- As marcas serão carregadas dinamicamente da API -->
             </select>
 
             <button id="btn-aplicar" class="btn-primary">Aplicar Filtros</button>
@@ -77,7 +79,7 @@
 
     <section id="produtos" class="catalogo">
         <h2>Catálogo Premium</h2>
-        <p class="subtitle">Mais de 40 itens selecionados para você</p>
+        <p class="subtitle">40+ itens selecionados para você</p>
 
         <div id="produtos-container" class="produtos-grid">
             <div class="carregando">
@@ -104,11 +106,8 @@
                     produtos = await response.json();
                     console.log(`✅ ${produtos.length} produtos carregados:`, produtos);
                     
-                    // Extrai marcas únicas dos produtos (com tratamento de valores nulos)
                     marcasUnicas = [...new Set(produtos.map(p => p.marca).filter(marca => marca))].sort();
                     console.log(`📊 Marcas encontradas:`, marcasUnicas);
-                    
-                    // Atualiza o filtro de marcas
                     atualizarFiltroMarcas();
                 } else {
                     throw new Error(`API retornou status: ${response.status}`);
@@ -139,10 +138,9 @@
 
         function atualizarFiltroMarcas() {
             const filtroMarca = document.getElementById("filtro-marca");
-            // Limpa opções existentes (mantendo apenas a primeira)
+
             filtroMarca.innerHTML = '<option value="">Todas as Marcas</option>';
             
-            // Adiciona as marcas do banco de dados
             marcasUnicas.forEach(marca => {
                 const option = document.createElement("option");
                 option.value = marca;
@@ -166,7 +164,6 @@
             }
 
             produtosFiltrados.forEach(p => {
-                // Garante que os dados existem para evitar erros
                 const nome = p.nome || "Produto sem nome";
                 const marca = p.marca || "Marca não especificada";
                 const categoria = p.categoria || "Sem categoria";
@@ -191,10 +188,14 @@
                             </div>
                             <div class="price-row">
                                 <p class="preco">R$ ${preco}</p>
-                                <button class="btn-buy" onclick="adicionarAoCarrinho(${id})">Adicionar</button>
+                                <button class="btn-buy" onclick="adicionarAoCarrinho(${id}, this)">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Adicionar
+                                </button>
                             </div>
                             <button class="btn-rec" onclick="verRecomendados(${id})">
-                                💫 Ver semelhantes
+                                <i class="fas fa-star"></i>
+                                Ver semelhantes
                             </button>
                         </div>
                     </div>
@@ -249,22 +250,18 @@
             }
         }
 
-        // Event Listeners
         document.getElementById("btn-aplicar").addEventListener("click", filtrarProdutos);
         document.getElementById("btn-limpar").addEventListener("click", limparFiltros);
 
-        // Permitir filtro ao mudar seleção nos selects
         document.querySelectorAll('.filtros select').forEach(select => {
             select.addEventListener('change', filtrarProdutos);
         });
 
-        // Funções de recomendação
         async function verRecomendados(id) {
             try {
                 const res = await fetch(`/api/recomendar/${id}`);
                 const recs = await res.json();
 
-                // Remove recomendações anteriores se existirem
                 const existingRecs = document.getElementById('recomendacoes-section');
                 if (existingRecs) {
                     existingRecs.remove();
@@ -295,11 +292,12 @@
                             <span class="recomendacao-categoria">${recCategoria}</span>
                             <p class="recomendacao-preco">R$ ${recPreco}</p>
                             <div class="recomendacao-actions">
-                                <button class="btn-add-cart" onclick="adicionarAoCarrinho(${recId})">
-                                    🛒 Adicionar
+                                <button class="btn-add-cart" onclick="adicionarAoCarrinho(${recId}, this)">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Adicionar
                                 </button>
                                 <button class="btn-favorite" onclick="favoritar(${recId})">
-                                    ❤️
+                                    <i class="fas fa-heart"></i>
                                 </button>
                             </div>
                         </div>
@@ -310,10 +308,11 @@
                     <section id="recomendacoes-section" class="recomendacoes-section">
                         <div class="recomendacoes-header">
                             <h2 class="recomendacoes-title">
-                                ✨ Recomendados para você
+                                <i class="fas fa-star"></i>
+                                Recomendados para você
                             </h2>
                             <button class="close-recomendacoes" onclick="fecharRecomendacoes()">
-                                ×
+                                <i class="fas fa-times"></i>
                             </button>
                         </div>
                         <p style="color: #666; margin-bottom: 1.5rem;">
@@ -325,11 +324,10 @@
                     </section>
                 `;
 
-                // Insere após a seção de catálogo
+
                 const catalogoSection = document.getElementById('produtos');
                 catalogoSection.insertAdjacentHTML('afterend', recomendacoesHTML);
 
-                // Scroll suave para as recomendações
                 document.getElementById('recomendacoes-section').scrollIntoView({ 
                     behavior: 'smooth' 
                 });
@@ -350,7 +348,7 @@
             const emptyHTML = `
                 <section id="recomendacoes-section" class="recomendacoes-section">
                     <div class="empty-recomendacoes">
-                        <div>🔍</div>
+                        <div><i class="fas fa-search"></i></div>
                         <h3>Nenhuma recomendação encontrada</h3>
                         <p>Tente outro produto para ver recomendações similares</p>
                     </div>
@@ -361,20 +359,74 @@
             catalogoSection.insertAdjacentHTML('afterend', emptyHTML);
         }
 
-        // Funções auxiliares
-        function adicionarAoCarrinho(id) {
-            alert(`Produto ${id} adicionado ao carrinho!`);
-            // Implementar lógica do carrinho
+        async function adicionarAoCarrinho(id, button) {
+            try {
+                const response = await fetch(`/api/carrinho/adicionar/${id}`, {
+                    method: 'POST'
+                });
+
+                const resultado = await response.json();
+
+                if (response.ok) {
+                    const originalHTML = button.innerHTML;
+                    const originalBackground = button.style.background;
+                    
+                    button.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+                    button.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+                    button.disabled = true;
+
+                    setTimeout(() => {
+                        button.innerHTML = originalHTML;
+                        button.style.background = originalBackground;
+                        button.disabled = false;
+                    }, 2000);
+
+                    console.log('Produto adicionado ao carrinho:', resultado.mensagem);
+                    
+                    mostrarNotificacao('Produto adicionado ao carrinho!', 'success');
+                } else {
+                    mostrarNotificacao('Erro ao adicionar ao carrinho: ' + resultado.erro, 'error');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarNotificacao('Erro de conexão ao adicionar ao carrinho', 'error');
+            }
         }
 
         function favoritar(id) {
-            alert(`Produto ${id} favoritado!`);
-            // Implementar lógica de favoritos
+            mostrarNotificacao('Funcionalidade de favoritos em desenvolvimento!', 'info');
         }
 
-        // Inicialização
+        function mostrarNotificacao(mensagem, tipo = 'info') {
+            const notificacao = document.createElement('div');
+            notificacao.className = `notificacao notificacao-${tipo}`;
+            notificacao.innerHTML = `
+                <div class="notificacao-conteudo">
+                    <i class="fas fa-${tipo === 'success' ? 'check' : tipo === 'error' ? 'exclamation-triangle' : 'info'}"></i>
+                    <span>${mensagem}</span>
+                </div>
+            `;
+
+            document.body.appendChild(notificacao);
+
+
+            setTimeout(() => {
+                notificacao.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notificacao.classList.remove('show');
+                setTimeout(() => {
+                    if (notificacao.parentNode) {
+                        notificacao.parentNode.removeChild(notificacao);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
         window.onload = carregarProdutos;
     </script>
+
 
 </body>
 </html>
