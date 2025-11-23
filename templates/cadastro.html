@@ -4,15 +4,11 @@
     <meta charset="UTF-8">
     <title>Cadastro – Luna Belle</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Google API -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
-<body class="cadastro-body">
+<body class="login-body">
 
     <div class="particles" id="particles"></div>
 
@@ -22,68 +18,55 @@
         <div class="floating-element" style="width: 80px; height: 80px; top: 80%; left: 10%;"></div>
     </div>
 
-    <div class="cadastro-container">
+    <div class="login-container">
 
         <div class="logo-container">
             <div class="logo-circle">
                 <img src="/static/img/LB Logo.png" alt="Logo Luna Belle">
             </div>
-            <h1 class="cadastro-title">Luna <span>Belle</span></h1>
-            <p class="cadastro-sub">Crie sua conta</p>
+            <h1 class="login-title">Criar <span>Conta</span></h1>
+            <p class="login-sub">Junte-se à comunidade Luna Belle</p>
         </div>
 
-        <div id="erroBox" class="error-message" style="display:none;">
-            <i class="fas fa-exclamation-circle"></i>
-            <span id="erroText"></span>
+        {% if erro %}
+        <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i> {{ erro }}
         </div>
+        {% endif %}
 
-        <!-- FORMULÁRIO VINCULADO AO JSON -->
-        <form id="form-cadastro" class="cadastro-form">
-
-            <!-- Nome -->
+        <form id="cadastroForm" class="login-form">
             <div class="form-group">
-                <input type="text" name="nome" id="nome" placeholder="Nome completo" required>
-                <i class="fas fa-user"></i>
+                <input type="text" name="nome_completo" id="nome_completo" placeholder="Nome completo" required>
+                <i class="fas fa-user input-icon"></i>
             </div>
-
-            <!-- Email -->
+            
             <div class="form-group">
                 <input type="email" name="email" id="email" placeholder="Seu email" required>
-                <i class="fas fa-envelope"></i>
+                <i class="fas fa-envelope input-icon"></i>
             </div>
-
-            <!-- Senha -->
+            
             <div class="form-group">
-                <input type="password" name="senha" id="senha" placeholder="Sua senha" required>
-                <i class="fas fa-lock"></i>
-                <button type="button" class="password-toggle" onclick="togglePassword()">
+                <input type="password" name="senha" id="senha" placeholder="Sua senha" required minlength="6">
+                <button type="button" class="password-toggle" onclick="togglePassword('senha')">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" name="confirmar_senha" id="confirmar_senha" placeholder="Confirmar senha" required minlength="6">
+                <button type="button" class="password-toggle" onclick="togglePassword('confirmar_senha')">
                     <i class="fas fa-eye"></i>
                 </button>
             </div>
 
-            <!-- Termos -->
-            <div class="terms-checkbox">
-                <input type="checkbox" id="terms" required>
-                <label for="terms">
-                    Concordo com os 
-                    <a href="/termos" class="terms-link">Termos de Serviço</a> e 
-                    <a href="/privacidade" class="terms-link">Política de Privacidade</a>
-                </label>
-            </div>
-
-            <!-- Botão -->
             <button type="submit" class="btn-primary" id="btnCadastrar">
                 <i class="fas fa-user-plus"></i>
                 Criar Conta
             </button>
-
-            <!-- Login Google -->
-            <div id="googleLogin" style="margin-top: 20px;"></div>
-
         </form>
 
-        <p class="login-link">
-            Já possui conta? <a href="/login">Faça login</a>
+        <p class="cadastro-link">
+            Já possui conta? <a href="/login">Fazer login</a>
         </p>
 
         <a href="/" class="voltar-btn">
@@ -93,136 +76,97 @@
 
     </div>
 
-<script>
-/* ---------------------------
-   MOSTRAR/OCULTAR SENHA
----------------------------- */
-function togglePassword() {
-    const senhaInput = document.getElementById('senha');
-    const icon = document.querySelector('.password-toggle i');
-    senhaInput.type = senhaInput.type === 'password' ? 'text' : 'password';
-    icon.classList.toggle('fa-eye');
-    icon.classList.toggle('fa-eye-slash');
-}
+    <script>
+    /* ---------------------------
+       Mostrar/ocultar senha
+    ---------------------------- */
+    function togglePassword(fieldId) {
+        const senhaInput = document.getElementById(fieldId);
+        const icon = senhaInput.parentNode.querySelector('.password-toggle i');
+        senhaInput.type = senhaInput.type === 'password' ? 'text' : 'password';
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    }
 
-/* ---------------------------
-   ENVIO PARA BANCO JSON
----------------------------- */
-document.getElementById("form-cadastro").addEventListener("submit", async function(e) {
-    e.preventDefault();
+    /* ---------------------------
+       Validação do formulário
+    ---------------------------- */
+    document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const btnCadastrar = document.getElementById('btnCadastrar');
+        const formData = new FormData(this);
+        const dados = {
+            nome: formData.get('nome_completo'),
+            email: formData.get('email'),
+            senha: formData.get('senha'),
+            confirmar_senha: formData.get('confirmar_senha')
+        };
 
-    const btn = document.getElementById("btnCadastrar");
-    btn.classList.add("btn-loading");
-    btn.disabled = true;
-
-    // CAPTURANDO DADOS (VINCULADO AO JSON)
-    const body = {
-        nome: document.getElementById("nome").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        senha: document.getElementById("senha").value.trim(),
-        termos: document.getElementById("terms").checked,
-        data_criacao: new Date().toISOString()
-    };
-
-    try {
-        const response = await fetch("/api/cadastro", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(body)
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            mostrarErro(result.erro || "Erro ao criar conta.");
-            btn.disabled = false;
-            btn.classList.remove("btn-loading");
+        // Validações
+        if (dados.senha !== dados.confirmar_senha) {
+            alert('As senhas não coincidem!');
             return;
         }
 
-        window.location.href = "/login";
+        if (dados.senha.length < 6) {
+            alert('A senha deve ter pelo menos 6 caracteres!');
+            return;
+        }
 
-    } catch (e) {
-        mostrarErro("Erro no servidor.");
-        btn.disabled = false;
-        btn.classList.remove("btn-loading");
-    }
-});
+        // Mostrar loading
+        btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cadastrando...';
+        btnCadastrar.disabled = true;
 
-/* ---------------------------
-   ERRO
----------------------------- */
-function mostrarErro(msg) {
-    const box = document.getElementById("erroBox");
-    const text = document.getElementById("erroText");
-    text.textContent = msg;
-    box.style.display = "flex";
-}
+        try {
+            const response = await fetch('/api/cadastro', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dados)
+            });
 
-/* ---------------------------
-   GOOGLE LOGIN
----------------------------- */
-window.onload = function () {
-    google.accounts.id.initialize({
-        client_id: "SEU_CLIENT_ID_GOOGLE_AQUI",
-        callback: loginGoogleCallback
+            const resultado = await response.json();
+
+            if (response.ok) {
+                alert('Conta criada com sucesso! Redirecionando para login...');
+                window.location.href = '/login';
+            } else {
+                alert(resultado.erro || 'Erro ao criar conta');
+            }
+        } catch (error) {
+            alert('Erro de conexão. Tente novamente.');
+            console.error('Erro:', error);
+        } finally {
+            // Restaurar botão
+            btnCadastrar.innerHTML = '<i class="fas fa-user-plus"></i> Criar Conta';
+            btnCadastrar.disabled = false;
+        }
     });
 
-    google.accounts.id.renderButton(
-        document.getElementById("googleLogin"),
-        { theme: "filled_black", size: "large", width: "100%" }
-    );
-};
+    /* ---------------------------
+       Partículas
+    ---------------------------- */
+    function criarParticulas() {
+        const container = document.getElementById('particles');
+        const particleCount = 15;
 
-async function loginGoogleCallback(response) {
-    // ENVIA TOKEN GOOGLE → BACKEND → JSON
-    await fetch("/api/google-login", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ credential: response.credential })
-    })
-    .then(r => r.json())
-    .then(() => window.location.href = "/");
-}
-
-/* ---------------------------
-   Animações
----------------------------- */
-function criarParticulas() {
-    const container = document.getElementById('particles');
-    for (let i = 0; i < 15; i++) {
-        const particle = document.createElement('div');
-        particle.classList.add('particle');
-        const size = Math.random() * 6 + 2;
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.left = `${Math.random() * 100}%`;
-        particle.style.top = `${Math.random() * 100}%`;
-        particle.style.animationDelay = `${Math.random() * 5}s`;
-        container.appendChild(particle);
-    }
-}
-
-function typeWriter() {
-    const text = "Junte-se à comunidade Luna Belle";
-    const element = document.querySelector('.cadastro-sub');
-    let i = 0;
-    element.innerHTML = '';
-    function type() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(type, 45);
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 6 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            container.appendChild(particle);
         }
     }
-    setTimeout(type, 500);
-}
 
-document.addEventListener('DOMContentLoaded', function() {
     criarParticulas();
-    typeWriter();
-});
-</script>
+    </script>
 
 </body>
 </html>

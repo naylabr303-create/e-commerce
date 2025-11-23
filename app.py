@@ -11,33 +11,48 @@ app = Flask(__name__)
 app.secret_key = "chave"
 
 # ---------------------------------------------
-# CARREGAR CSV (DENTRO DA PASTA /data) - CORRIGIDO
+# CARREGAR CSV - VERSÃO CORRIGIDA (SEM EMOJIS)
 # ---------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CSV_PATH = os.path.join(BASE_DIR, "data", "maquiagens.csv")
 
-if not os.path.exists(CSV_PATH):
-    raise FileNotFoundError(f"ERRO: Não encontrei o arquivo {CSV_PATH}")
-
-# CORREÇÃO: Lidar com possíveis erros no CSV
-try:
-    # Tenta ler com diferentes abordagens
-    df = pd.read_csv(CSV_PATH, encoding="utf-8", on_bad_lines='skip', engine='python')
-except Exception as e:
-    print(f"Erro ao ler CSV: {e}")
-    # Tenta alternativa se o método acima falhar
+def carregar_dataframe():
+    """Carrega o DataFrame com tratamento de erros"""
     try:
-        df = pd.read_csv(CSV_PATH, encoding="utf-8", error_bad_lines=False)
-    except:
-        # Última tentativa com encoding diferente
-        df = pd.read_csv(CSV_PATH, encoding="latin-1", on_bad_lines='skip', engine='python')
+        if not os.path.exists(CSV_PATH):
+            raise FileNotFoundError(f"ERRO: Arquivo {CSV_PATH} não encontrado")
+        
+        # Tenta ler o CSV
+        df = pd.read_csv(CSV_PATH, encoding='utf-8')
+        
+        # Verifica se as colunas necessárias existem
+        colunas_necessarias = ['id', 'nome', 'categoria', 'tom_pele', 'marca', 'preco']
+        for coluna in colunas_necessarias:
+            if coluna not in df.columns:
+                print(f"AVISO: Coluna '{coluna}' não encontrada no CSV")
+                return None
+        
+        # Limpa dados
+        df = df.dropna(subset=['id', 'nome'])  # Remove linhas sem ID ou nome
+        df['id'] = df['id'].astype(int)
+        df['preco'] = pd.to_numeric(df['preco'], errors='coerce').fillna(0)
+        
+        print(f"SUCESSO: CSV carregado com {len(df)} produtos")
+        print(f"CATEGORIAS: {df['categoria'].unique()}")
+        print(f"MARCAS: {df['marca'].unique()}")
+        
+        return df
+        
+    except Exception as e:
+        print(f"ERRO CRITICO ao carregar CSV: {e}")
+        return None
 
-# Verifica se o DataFrame foi carregado corretamente
-if df.empty:
-    raise ValueError("DataFrame vazio - verifique o arquivo CSV")
+# Carrega o DataFrame
+df = carregar_dataframe()
 
-print(f"CSV carregado com {len(df)} linhas e {len(df.columns)} colunas")
-print(f"Colunas: {df.columns.tolist()}")
+if df is None:
+    print("ERRO: Não foi possível carregar o CSV. Criando DataFrame vazio.")
+    df = pd.DataFrame(columns=['id', 'nome', 'categoria', 'tom_pele', 'marca', 'preco', 'descricao', 'imagem'])
 
 # ---------------------------------------------
 # ARQUIVO DE USUÁRIOS JSON
@@ -70,12 +85,12 @@ except:
 colunas_necessarias = ["nome", "descricao", "categoria", "marca"]
 for col in colunas_necessarias:
     if col not in df.columns:
-        print(f"Aviso: Coluna '{col}' não encontrada no DataFrame")
+        print(f"AVISO: Coluna '{col}' não encontrada no DataFrame")
         df[col] = ""  # Cria coluna vazia se não existir
 
 # Garante que a coluna 'id' existe
 if "id" not in df.columns:
-    print("Aviso: Criando coluna 'id' automática")
+    print("AVISO: Criando coluna 'id' automática")
     df["id"] = range(1, len(df) + 1)
 
 df["texto"] = (
@@ -87,14 +102,14 @@ df["texto"] = (
 
 # CORREÇÃO: Verifica se há texto para processar
 if df["texto"].str.strip().eq("").all():
-    print("Aviso: Coluna 'texto' está vazia")
+    print("AVISO: Coluna 'texto' está vazia")
     df["texto"] = "produto"  # Valor padrão
 
 try:
     tfidf = TfidfVectorizer(stop_words=stop_pt)
     matriz = tfidf.fit_transform(df["texto"])
 except Exception as e:
-    print(f"Erro no TF-IDF: {e}")
+    print(f"ERRO no TF-IDF: {e}")
     # Fallback simples
     from sklearn.feature_extraction.text import CountVectorizer
     tfidf = CountVectorizer(stop_words=stop_pt)
@@ -107,7 +122,7 @@ def recomendar(produto_id, n=6):
         print(f"Produto ID {produto_id} não encontrado")
         return []
     except Exception as e:
-        print(f"Erro ao buscar produto: {e}")
+        print(f"ERRO ao buscar produto: {e}")
         return []
 
     try:
@@ -117,11 +132,35 @@ def recomendar(produto_id, n=6):
 
         return df.iloc[indices][:n].to_dict(orient="records")
     except Exception as e:
-        print(f"Erro na recomendação: {e}")
+        print(f"ERRO na recomendação: {e}")
         return []
 
 # ---------------------------------------------
-# ROTA API DE CADASTRO (USADA PELO SEU FORM JS)
+# ROTA DEBUG PARA VERIFICAR DADOS
+# ---------------------------------------------
+@app.route("/debug")
+def debug():
+    """Página de debug para verificar os dados"""
+    if df.empty:
+        info = {
+            "status": "ERRO: DataFrame vazio",
+            "total_produtos": 0,
+            "colunas": [],
+            "primeiros_5": []
+        }
+    else:
+        info = {
+            "status": "OK",
+            "total_produtos": len(df),
+            "colunas": df.columns.tolist(),
+            "primeiros_5": df.head().to_dict('records'),
+            "categorias": df['categoria'].unique().tolist(),
+            "marcas": df['marca'].unique().tolist()
+        }
+    return jsonify(info)
+
+# ---------------------------------------------
+# ROTA API DE CADASTRO ATUALIZADA
 # ---------------------------------------------
 @app.route("/api/cadastro", methods=["POST"])
 def api_cadastro():
@@ -130,16 +169,30 @@ def api_cadastro():
     nome = data.get("nome")
     email = data.get("email")
     senha = data.get("senha")
+    confirmar_senha = data.get("confirmar_senha")
 
+    # Validações
     if not nome or not email or not senha:
         return jsonify({"erro": "Preencha todos os campos!"}), 400
+
+    if senha != confirmar_senha:
+        return jsonify({"erro": "As senhas não coincidem!"}), 400
+
+    if len(senha) < 6:
+        return jsonify({"erro": "A senha deve ter pelo menos 6 caracteres!"}), 400
 
     usuarios = carregar_usuarios()
 
     if email in usuarios:
         return jsonify({"erro": "Este email já está cadastrado!"}), 400
 
-    usuarios[email] = senha
+    # Salva usuário (em produção, hash a senha!)
+    usuarios[email] = {
+        "nome": nome,
+        "senha": senha,  # EM PRODUÇÃO: usar bcrypt para hash!
+        "data_cadastro": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+    
     salvar_usuarios(usuarios)
 
     return jsonify({"mensagem": "Conta criada com sucesso!"}), 200
@@ -165,8 +218,16 @@ def login():
         if email not in usuarios:
             return render_template("login.html", erro="Conta não encontrada. Cadastre-se!")
 
-        if usuarios[email] != senha:
-            return render_template("login.html", erro="Senha incorreta!")
+        # Verifica se é um usuário antigo (apenas senha) ou novo (dicionário)
+        usuario = usuarios[email]
+        if isinstance(usuario, dict):
+            # Usuário novo (com nome)
+            if usuario["senha"] != senha:
+                return render_template("login.html", erro="Senha incorreta!")
+        else:
+            # Usuário antigo (apenas senha)
+            if usuario != senha:
+                return render_template("login.html", erro="Senha incorreta!")
 
         session["user"] = email
         return redirect("/catalogo")
@@ -174,20 +235,27 @@ def login():
     return render_template("login.html")
 
 # -----------------------
-# CADASTRO NORMAL (NÃO USADO PELO HTML ENVIADO)
+# CADASTRO NORMAL
 # -----------------------
 @app.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
     if request.method == "POST":
         email = request.form["email"]
         senha = request.form["senha"]
+        nome = request.form.get("nome_completo", "")
 
         usuarios = carregar_usuarios()
 
         if email in usuarios:
             return render_template("cadastro.html", erro="Este email já está cadastrado!")
 
-        usuarios[email] = senha
+        # Salva como dicionário com nome
+        usuarios[email] = {
+            "nome": nome,
+            "senha": senha,
+            "data_cadastro": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        
         salvar_usuarios(usuarios)
 
         return redirect("/login")
@@ -213,17 +281,46 @@ def produto(pid):
     except IndexError:
         return "Produto não encontrado", 404
     except Exception as e:
-        print(f"Erro na página do produto: {e}")
+        print(f"ERRO na página do produto: {e}")
         return "Erro interno", 500
 
-# APIs auxiliares
+# -----------------------
+# APIs AUXILIARES - CORRIGIDAS
+# -----------------------
 @app.route("/api/maquiagens")
 def api_maquiagens():
-    return jsonify(df.to_dict(orient="records"))
+    try:
+        if df.empty:
+            return jsonify({"erro": "Nenhum produto disponível"}), 500
+            
+        produtos = df.to_dict('records')
+        
+        # Garante que todos os campos estão presentes e formatados corretamente
+        for produto in produtos:
+            produto['id'] = int(produto.get('id', 0))
+            produto['preco'] = float(produto.get('preco', 0))
+            produto['nome'] = produto.get('nome', 'Produto sem nome')
+            produto['categoria'] = produto.get('categoria', 'Sem categoria')
+            produto['marca'] = produto.get('marca', 'Sem marca')
+            produto['tom_pele'] = produto.get('tom_pele', 'todos')
+            produto['descricao'] = produto.get('descricao', 'Descrição não disponível')
+            produto['imagem'] = produto.get('imagem', 'https://via.placeholder.com/300x300?text=Imagem+Não+Disponível')
+        
+        print(f"API: Retornando {len(produtos)} produtos")
+        return jsonify(produtos)
+    
+    except Exception as e:
+        print(f"ERRO na API /api/maquiagens: {e}")
+        return jsonify({"erro": "Erro ao carregar produtos"}), 500
 
 @app.route("/api/recomendar/<int:pid>")
 def api_recomendar(pid):
-    return jsonify(recomendar(pid))
+    try:
+        recomendacoes = recomendar(pid)
+        return jsonify(recomendacoes)
+    except Exception as e:
+        print(f"ERRO na recomendação API: {e}")
+        return jsonify([])
 
 # LOGOUT
 @app.route("/logout")

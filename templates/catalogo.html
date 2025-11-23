@@ -2,83 +2,16 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Catálogo – Lumiê Beauty AI</title>
-
+    <title>Catálogo – Luna Belle</title>
     <link rel="stylesheet" href="/static/css/catalogo.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-
-    <script>
-        async function carregarProdutos() {
-            const container = document.getElementById("produtos-container");
-            const produtos = await (await fetch("/api/maquiagens")).json();
-
-            container.innerHTML = "";
-
-            produtos.forEach(p => {
-                container.innerHTML += `
-                    <div class="card fade-in">
-
-                        <div class="card-img">
-                            <img src="${p.imagem}" alt="${p.nome}">
-                        </div>
-
-                        <div class="card-body">
-                            <h3>${p.nome}</h3>
-                            <p class="marca">${p.marca}</p>
-
-                            <p class="desc">${p.descricao || "Produto premium selecionado pela IA."}</p>
-
-                            <div class="tags">
-                                <span class="tag cat">${p.categoria}</span>
-                                <span class="tag tono">${p.tom_pele}</span>
-                            </div>
-
-                            <div class="price-row">
-                                <p class="preco">R$ ${p.preco.toFixed(2)}</p>
-                                <button class="btn-buy">Adicionar</button>
-                            </div>
-
-                            <button class="btn-rec" onclick="verRecomendados(${p.id})">
-                                Ver semelhantes
-                            </button>
-
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        async function verRecomendados(id) {
-            const res = await fetch(`/api/recomendar/${id}`);
-            const recs = await res.json();
-
-            let cards = "";
-
-            recs.forEach(r => {
-                cards += `
-                <div class="card small-card fade-in">
-                    <img src="${r.imagem}" alt="${r.nome}">
-                    <h3>${r.nome}</h3>
-                    <p>${r.marca}</p>
-                    <p class="preco">R$ ${r.preco}</p>
-                </div>`;
-            });
-
-            document.getElementById("produtos-container").innerHTML += cards;
-
-            alert("Produtos semelhantes adicionados ao final do catálogo.");
-        }
-
-        window.onload = carregarProdutos;
-    </script>
-
 </head>
 
 <body>
 
     <header class="navbar">
-        <div class="logo">Lumiê <span>Beauty</span> AI</div>
+        <div class="logo">Luna Bella <span>Beauty</span> AI</div>
 
         <nav class="menu">
             <a href="/">Home</a>
@@ -106,26 +39,39 @@
 
         <div class="filtros-grid">
             <select id="filtro-cat">
-                <option value="">Categoria</option>
+                <option value="">Todas as Categorias</option>
                 <option value="base">Base</option>
                 <option value="batom">Batom</option>
-                <option value="sombra">Sombra</option>
                 <option value="corretivo">Corretivo</option>
                 <option value="blush">Blush</option>
                 <option value="pó">Pó</option>
-                <option value="rimel">Rímel</option>
+                <option value="mascara">Máscara</option>
+                <option value="iluminador">Iluminador</option>
+                <option value="sombra">Sombra</option>
+                <option value="gloss">Gloss</option>
                 <option value="primer">Primer</option>
             </select>
 
             <select id="filtro-pele">
-                <option value="">Tom de Pele</option>
+                <option value="">Todos os Tons de Pele</option>
                 <option value="clara">Clara</option>
                 <option value="media">Média</option>
-                <option value="morena">Morena</option>
-                <option value="negra">Negra</option>
+                <option value="escura">Escura</option>
+                <option value="todos">Todos os Tons</option>
             </select>
 
-            <button class="btn-primary">Aplicar</button>
+            <select id="filtro-marca">
+                <option value="">Todas as Marcas</option>
+                <!-- As marcas serão carregadas dinamicamente da API -->
+            </select>
+
+            <button id="btn-aplicar" class="btn-primary">Aplicar Filtros</button>
+            <button id="btn-limpar" class="filtro-reset">Limpar</button>
+        </div>
+        
+        <div class="filtro-info">
+            <span id="filtro-contador" class="filtro-contador"></span>
+            <span id="filtro-ativo" class="filtro-ativo-indicator"></span>
         </div>
     </section>
 
@@ -133,12 +79,302 @@
         <h2>Catálogo Premium</h2>
         <p class="subtitle">Mais de 40 itens selecionados para você</p>
 
-        <div id="produtos-container" class="produtos-grid"></div>
+        <div id="produtos-container" class="produtos-grid">
+            <div class="carregando">
+                <p>Carregando produtos...</p>
+            </div>
+        </div>
     </section>
 
     <footer>
-        <p>© 2025 Lumiê Beauty AI — Beleza elevada ao máximo.</p>
+        <p>© 2025 Luna Belle — Beleza elevada ao máximo.</p>
     </footer>
+
+    <script>
+        let produtos = [];
+        let produtosFiltrados = [];
+        let marcasUnicas = [];
+
+        async function carregarProdutos() {
+            try {
+                console.log("🔄 Carregando produtos da API...");
+                const response = await fetch("/api/maquiagens");
+                
+                if (response.ok) {
+                    produtos = await response.json();
+                    console.log(`✅ ${produtos.length} produtos carregados:`, produtos);
+                    
+                    // Extrai marcas únicas dos produtos (com tratamento de valores nulos)
+                    marcasUnicas = [...new Set(produtos.map(p => p.marca).filter(marca => marca))].sort();
+                    console.log(`📊 Marcas encontradas:`, marcasUnicas);
+                    
+                    // Atualiza o filtro de marcas
+                    atualizarFiltroMarcas();
+                } else {
+                    throw new Error(`API retornou status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error("❌ Erro ao carregar produtos:", error);
+                mostrarErroCarregamento();
+                produtos = [];
+                marcasUnicas = [];
+            }
+            
+            produtosFiltrados = [...produtos];
+            exibirProdutos();
+            atualizarContador();
+        }
+
+        function mostrarErroCarregamento() {
+            const container = document.getElementById("produtos-container");
+            container.innerHTML = `
+                <div class="erro-carregamento">
+                    <h3>⚠️ Erro ao carregar produtos</h3>
+                    <p>Não foi possível conectar com o banco de dados.</p>
+                    <p>Verifique se o servidor Flask está rodando.</p>
+                    <button class="btn-primary" onclick="carregarProdutos()">Tentar Novamente</button>
+                </div>
+            `;
+        }
+
+        function atualizarFiltroMarcas() {
+            const filtroMarca = document.getElementById("filtro-marca");
+            // Limpa opções existentes (mantendo apenas a primeira)
+            filtroMarca.innerHTML = '<option value="">Todas as Marcas</option>';
+            
+            // Adiciona as marcas do banco de dados
+            marcasUnicas.forEach(marca => {
+                const option = document.createElement("option");
+                option.value = marca;
+                option.textContent = marca;
+                filtroMarca.appendChild(option);
+            });
+        }
+
+        function exibirProdutos() {
+            const container = document.getElementById("produtos-container");
+            container.innerHTML = "";
+
+            if (produtosFiltrados.length === 0) {
+                container.innerHTML = `
+                    <div class="sem-produtos">
+                        <p>Nenhum produto encontrado com os filtros selecionados.</p>
+                        <button class="btn-primary" onclick="limparFiltros()">Limpar Filtros</button>
+                    </div>
+                `;
+                return;
+            }
+
+            produtosFiltrados.forEach(p => {
+                // Garante que os dados existem para evitar erros
+                const nome = p.nome || "Produto sem nome";
+                const marca = p.marca || "Marca não especificada";
+                const categoria = p.categoria || "Sem categoria";
+                const tomPele = p.tom_pele || "Todos os tons";
+                const preco = p.preco ? parseFloat(p.preco).toFixed(2) : "0.00";
+                const imagem = p.imagem || 'https://via.placeholder.com/300x300?text=Imagem+Não+Disponível';
+                const id = p.id || 0;
+                const descricao = p.descricao || "Produto premium selecionado pela IA.";
+
+                container.innerHTML += `
+                    <div class="card fade-in">
+                        <div class="card-img">
+                            <img src="${imagem}" alt="${nome}" onerror="this.src='https://via.placeholder.com/300x300?text=Imagem+Não+Disponível'">
+                        </div>
+                        <div class="card-body">
+                            <h3>${nome}</h3>
+                            <p class="marca">${marca}</p>
+                            <p class="desc">${descricao}</p>
+                            <div class="tags">
+                                <span class="tag cat">${categoria}</span>
+                                <span class="tag tono">${tomPele}</span>
+                            </div>
+                            <div class="price-row">
+                                <p class="preco">R$ ${preco}</p>
+                                <button class="btn-buy" onclick="adicionarAoCarrinho(${id})">Adicionar</button>
+                            </div>
+                            <button class="btn-rec" onclick="verRecomendados(${id})">
+                                💫 Ver semelhantes
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filtrarProdutos() {
+            const categoria = document.getElementById("filtro-cat").value;
+            const tomPele = document.getElementById("filtro-pele").value;
+            const marca = document.getElementById("filtro-marca").value;
+
+            produtosFiltrados = produtos.filter(p => {
+                return (!categoria || p.categoria === categoria) &&
+                       (!tomPele || p.tom_pele === tomPele) &&
+                       (!marca || p.marca === marca);
+            });
+
+            exibirProdutos();
+            atualizarContador();
+            atualizarIndicadorFiltroAtivo(categoria, tomPele, marca);
+        }
+
+        function limparFiltros() {
+            document.getElementById("filtro-cat").value = "";
+            document.getElementById("filtro-pele").value = "";
+            document.getElementById("filtro-marca").value = "";
+            
+            produtosFiltrados = [...produtos];
+            exibirProdutos();
+            atualizarContador();
+            atualizarIndicadorFiltroAtivo("", "", "");
+        }
+
+        function atualizarContador() {
+            const contador = document.getElementById("filtro-contador");
+            contador.textContent = `${produtosFiltrados.length} de ${produtos.length} produtos`;
+        }
+
+        function atualizarIndicadorFiltroAtivo(categoria, tomPele, marca) {
+            const indicador = document.getElementById("filtro-ativo");
+            const filtrosAtivos = [];
+            
+            if (categoria) filtrosAtivos.push(`Categoria: ${categoria}`);
+            if (tomPele) filtrosAtivos.push(`Tom: ${tomPele}`);
+            if (marca) filtrosAtivos.push(`Marca: ${marca}`);
+            
+            if (filtrosAtivos.length > 0) {
+                indicador.textContent = `Filtros ativos: ${filtrosAtivos.join(', ')}`;
+            } else {
+                indicador.textContent = '';
+            }
+        }
+
+        // Event Listeners
+        document.getElementById("btn-aplicar").addEventListener("click", filtrarProdutos);
+        document.getElementById("btn-limpar").addEventListener("click", limparFiltros);
+
+        // Permitir filtro ao mudar seleção nos selects
+        document.querySelectorAll('.filtros select').forEach(select => {
+            select.addEventListener('change', filtrarProdutos);
+        });
+
+        // Funções de recomendação
+        async function verRecomendados(id) {
+            try {
+                const res = await fetch(`/api/recomendar/${id}`);
+                const recs = await res.json();
+
+                // Remove recomendações anteriores se existirem
+                const existingRecs = document.getElementById('recomendacoes-section');
+                if (existingRecs) {
+                    existingRecs.remove();
+                }
+
+                if (recs.length === 0) {
+                    mostrarRecomendacoesVazias();
+                    return;
+                }
+
+                let cardsHTML = '';
+
+                recs.forEach((r, index) => {
+                    const recNome = r.nome || "Produto sem nome";
+                    const recMarca = r.marca || "Marca não especificada";
+                    const recCategoria = r.categoria || "Sem categoria";
+                    const recPreco = r.preco ? parseFloat(r.preco).toFixed(2) : "0.00";
+                    const recImagem = r.imagem || 'https://via.placeholder.com/300x300?text=Imagem+Não+Disponível';
+                    const recId = r.id || 0;
+                    const similaridade = r.similaridade ? (r.similaridade * 100).toFixed(0) : '85';
+
+                    cardsHTML += `
+                        <div class="recomendacao-card" style="animation-delay: ${index * 0.1}s">
+                            <span class="similaridade-badge">${similaridade}% match</span>
+                            <img src="${recImagem}" alt="${recNome}" class="recomendacao-img" onerror="this.src='https://via.placeholder.com/300x300?text=Imagem+Não+Disponível'">
+                            <h3 class="recomendacao-nome">${recNome}</h3>
+                            <p class="recomendacao-marca">${recMarca}</p>
+                            <span class="recomendacao-categoria">${recCategoria}</span>
+                            <p class="recomendacao-preco">R$ ${recPreco}</p>
+                            <div class="recomendacao-actions">
+                                <button class="btn-add-cart" onclick="adicionarAoCarrinho(${recId})">
+                                    🛒 Adicionar
+                                </button>
+                                <button class="btn-favorite" onclick="favoritar(${recId})">
+                                    ❤️
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                const recomendacoesHTML = `
+                    <section id="recomendacoes-section" class="recomendacoes-section">
+                        <div class="recomendacoes-header">
+                            <h2 class="recomendacoes-title">
+                                ✨ Recomendados para você
+                            </h2>
+                            <button class="close-recomendacoes" onclick="fecharRecomendacoes()">
+                                ×
+                            </button>
+                        </div>
+                        <p style="color: #666; margin-bottom: 1.5rem;">
+                            Baseado em suas preferências e produtos similares
+                        </p>
+                        <div class="recomendacoes-grid">
+                            ${cardsHTML}
+                        </div>
+                    </section>
+                `;
+
+                // Insere após a seção de catálogo
+                const catalogoSection = document.getElementById('produtos');
+                catalogoSection.insertAdjacentHTML('afterend', recomendacoesHTML);
+
+                // Scroll suave para as recomendações
+                document.getElementById('recomendacoes-section').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+            } catch (error) {
+                console.error("Erro ao carregar recomendações:", error);
+                mostrarRecomendacoesVazias();
+            }
+        }
+
+        function fecharRecomendacoes() {
+            const recomendacoesSection = document.getElementById('recomendacoes-section');
+            if (recomendacoesSection) {
+                recomendacoesSection.remove();
+            }
+        }
+
+        function mostrarRecomendacoesVazias() {
+            const emptyHTML = `
+                <section id="recomendacoes-section" class="recomendacoes-section">
+                    <div class="empty-recomendacoes">
+                        <div>🔍</div>
+                        <h3>Nenhuma recomendação encontrada</h3>
+                        <p>Tente outro produto para ver recomendações similares</p>
+                    </div>
+                </section>
+            `;
+            
+            const catalogoSection = document.getElementById('produtos');
+            catalogoSection.insertAdjacentHTML('afterend', emptyHTML);
+        }
+
+        // Funções auxiliares
+        function adicionarAoCarrinho(id) {
+            alert(`Produto ${id} adicionado ao carrinho!`);
+            // Implementar lógica do carrinho
+        }
+
+        function favoritar(id) {
+            alert(`Produto ${id} favoritado!`);
+            // Implementar lógica de favoritos
+        }
+
+        // Inicialização
+        window.onload = carregarProdutos;
+    </script>
 
 </body>
 </html>
